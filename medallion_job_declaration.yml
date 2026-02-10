@@ -1,0 +1,49 @@
+resources:
+  jobs:
+    Medallion_Uniswap_Job:
+      name: Medallion_Uniswap_Job
+      email_notifications:
+        on_success:
+          - mariojuradogalan@outlook.com
+        on_failure:
+          - mariojuradogalan@outlook.com
+        no_alert_for_skipped_runs: true
+      notification_settings:
+        no_alert_for_skipped_runs: true
+        no_alert_for_canceled_runs: true
+      schedule:
+        quartz_cron_expression: 44 30 6 * * ?
+        timezone_id: UTC
+        pause_status: UNPAUSED
+      tasks:
+        - task_key: main_orchestrator
+          notebook_task:
+            notebook_path: /Workspace/Users/mariojuradogalan@outlook.com/uniswap-defi-data-platform/00_orchestrators/main_orchestrator
+            base_parameters:
+              create_architecture: "false"
+              create_orchestrator_tables: "true"
+              API_KEY: a5bbc98aac75dac555f9aba8747c7e2e
+              SUBGRAPH_ID: 5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV
+            source: WORKSPACE
+        - task_key: for_each_layer
+          depends_on:
+            - task_key: main_orchestrator
+          for_each_task:
+            inputs: "{{tasks.main_orchestrator.values.execute_layers}}"
+            task:
+              task_key: layer_orchestrator
+              notebook_task:
+                notebook_path: /Workspace/Users/mariojuradogalan@outlook.com/uniswap-defi-data-platform/00_orchestrators/layer_orchestrator
+                base_parameters:
+                  layer: "{{input}}"
+                  config_table_path: "{{tasks.main_orchestrator.values.config_table_path}}"
+                  logs_table_path: "{{tasks.main_orchestrator.values.logs_table_path}}"
+                  SUBGRAPH_URL: "{{tasks.main_orchestrator.values.SUBGRAPH_URL}}"
+                source: WORKSPACE
+          notification_settings:
+            no_alert_for_skipped_runs: true
+            no_alert_for_canceled_runs: true
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
+

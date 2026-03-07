@@ -12,18 +12,16 @@ resources:
         no_alert_for_skipped_runs: true
         no_alert_for_canceled_runs: true
       schedule:
-        quartz_cron_expression: 44 30 6 * * ?
+        quartz_cron_expression: 44 0 21 ? * Sun
         timezone_id: UTC
-        pause_status: UNPAUSED
+        pause_status: PAUSED
       tasks:
         - task_key: main_orchestrator
           notebook_task:
             notebook_path: /Workspace/Users/mariojuradogalan@outlook.com/uniswap-defi-data-platform/00_orchestrators/main_orchestrator
             base_parameters:
               create_architecture: "false"
-              create_orchestrator_tables: "true"
-              API_KEY: a5bbc98aac75dac555f9aba8747c7e2e
-              SUBGRAPH_ID: 5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV
+              create_orchestrator_tables: "false"
             source: WORKSPACE
         - task_key: for_each_layer
           depends_on:
@@ -46,4 +44,3 @@ resources:
       queue:
         enabled: true
       performance_target: PERFORMANCE_OPTIMIZED
-

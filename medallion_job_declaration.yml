@@ -36,7 +36,6 @@ resources:
                   layer: "{{input}}"
                   config_table_path: "{{tasks.main_orchestrator.values.config_table_path}}"
                   logs_table_path: "{{tasks.main_orchestrator.values.logs_table_path}}"
-                  SUBGRAPH_URL: "{{tasks.main_orchestrator.values.SUBGRAPH_URL}}"
                 source: WORKSPACE
           notification_settings:
             no_alert_for_skipped_runs: true

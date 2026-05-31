@@ -1,14 +1,2654 @@
 {
+  "datasets": [
+    {
+      "name": "e791ac38",
+      "displayName": "dim_tokens",
+      "config": {
+        "version": "1.1",
+        "source": "uniswap.gold.dim_tokens",
+        "dimensions": [
+          {
+            "name": "pk_token_contract",
+            "expr": "source.pk_token_contract",
+            "displayName": "Pk Token Contract"
+          },
+          {
+            "name": "symbol",
+            "expr": "source.symbol",
+            "displayName": "Symbol"
+          },
+          {
+            "name": "name",
+            "expr": "source.name",
+            "displayName": "Name"
+          },
+          {
+            "name": "decimals",
+            "expr": "source.decimals",
+            "displayName": "Decimals"
+          },
+          {
+            "name": "v3_held_total_supply",
+            "expr": "source.v3_held_total_supply",
+            "displayName": "V 3 Held Total Supply"
+          },
+          {
+            "name": "derived_price_ETH",
+            "expr": "source.derived_price_ETH",
+            "displayName": "Derived Price ETH"
+          },
+          {
+            "name": "fees_USD",
+            "expr": "source.fees_USD",
+            "displayName": "Fees USD"
+          },
+          {
+            "name": "total_value_locked_USD",
+            "expr": "source.total_value_locked_USD",
+            "displayName": "Total Value Locked USD"
+          },
+          {
+            "name": "total_value_locked_token",
+            "expr": "source.total_value_locked_token",
+            "displayName": "Total Value Locked Token"
+          },
+          {
+            "name": "volume_USD",
+            "expr": "source.volume_USD",
+            "displayName": "Volume USD"
+          },
+          {
+            "name": "volume_token",
+            "expr": "source.volume_token",
+            "displayName": "Volume Token"
+          },
+          {
+            "name": "tx_count",
+            "expr": "source.tx_count",
+            "displayName": "Tx Count"
+          },
+          {
+            "name": "pool_count",
+            "expr": "source.pool_count",
+            "displayName": "Pool Count"
+          },
+          {
+            "name": "token_type",
+            "expr": "source.token_type",
+            "displayName": "Token Type"
+          },
+          {
+            "name": "is_low_tvl_token",
+            "expr": "source.is_low_tvl_token",
+            "displayName": "Is Low Tvl Token"
+          },
+          {
+            "name": "network",
+            "expr": "source.network",
+            "displayName": "Network"
+          },
+          {
+            "name": "protocol_version",
+            "expr": "source.protocol_version",
+            "displayName": "Protocol Version"
+          },
+          {
+            "name": "_load_timestamp_gold",
+            "expr": "source._load_timestamp_gold",
+            "displayName": "Load Timestamp Gold"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "be1c301e",
+      "displayName": "tokens_details",
+      "queryLines": [
+        "SELECT \r\n",
+        "    *,\r\n",
+        "    CONCAT(\"https://app.uniswap.org/explore/tokens/ethereum/\",pk_token_contract) AS full_uniswap_url\r\n",
+        "FROM dim_tokens\r\n",
+        "WHERE symbol != \"ease.org\"\r\n"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "71d5b431",
+      "displayName": "tokens_top_volume",
+      "queryLines": [
+        "SELECT *\r\n",
+        "FROM dim_tokens\r\n",
+        "WHERE symbol != \"ease.org\"\r\n",
+        "ORDER BY volume_USD DESC\r\n",
+        "LIMIT 20\r\n"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "08b1aaa1",
+      "displayName": "tokens_most_traded",
+      "queryLines": [
+        "SELECT *\r\n",
+        "FROM dim_tokens\r\n",
+        "WHERE symbol != \"ease.org\"\r\n",
+        "ORDER BY tx_count DESC\r\n",
+        "LIMIT 20"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "f563f6be",
+      "displayName": "dim_pools",
+      "config": {
+        "version": "1.1",
+        "source": "uniswap.gold.dim_pools",
+        "dimensions": [
+          {
+            "name": "pk_pool_contract",
+            "expr": "source.pk_pool_contract",
+            "displayName": "Pk Pool Contract"
+          },
+          {
+            "name": "token0_id",
+            "expr": "source.token0_id",
+            "displayName": "Token 0 Id"
+          },
+          {
+            "name": "token1_id",
+            "expr": "source.token1_id",
+            "displayName": "Token 1 Id"
+          },
+          {
+            "name": "fee_tier_pct",
+            "expr": "source.fee_tier_pct",
+            "displayName": "Fee Tier Pct"
+          },
+          {
+            "name": "fees_USD",
+            "expr": "source.fees_USD",
+            "displayName": "Fees USD"
+          },
+          {
+            "name": "total_value_locked_USD",
+            "expr": "source.total_value_locked_USD",
+            "displayName": "Total Value Locked USD"
+          },
+          {
+            "name": "total_value_locked_ETH",
+            "expr": "source.total_value_locked_ETH",
+            "displayName": "Total Value Locked ETH"
+          },
+          {
+            "name": "total_value_locked_token0",
+            "expr": "source.total_value_locked_token0",
+            "displayName": "Total Value Locked Token 0"
+          },
+          {
+            "name": "total_value_locked_token1",
+            "expr": "source.total_value_locked_token1",
+            "displayName": "Total Value Locked Token 1"
+          },
+          {
+            "name": "volume_USD",
+            "expr": "source.volume_USD",
+            "displayName": "Volume USD"
+          },
+          {
+            "name": "volume_token0",
+            "expr": "source.volume_token0",
+            "displayName": "Volume Token 0"
+          },
+          {
+            "name": "volume_token1",
+            "expr": "source.volume_token1",
+            "displayName": "Volume Token 1"
+          },
+          {
+            "name": "liquidity",
+            "expr": "source.liquidity",
+            "displayName": "Liquidity"
+          },
+          {
+            "name": "tx_count",
+            "expr": "source.tx_count",
+            "displayName": "Tx Count"
+          },
+          {
+            "name": "created_at_block_number",
+            "expr": "source.created_at_block_number",
+            "displayName": "Created At Block Number"
+          },
+          {
+            "name": "created_at_timestamp",
+            "expr": "source.created_at_timestamp",
+            "displayName": "Created At Timestamp"
+          },
+          {
+            "name": "token0_symbol",
+            "expr": "source.token0_symbol",
+            "displayName": "Token 0 Symbol"
+          },
+          {
+            "name": "token0_name",
+            "expr": "source.token0_name",
+            "displayName": "Token 0 Name"
+          },
+          {
+            "name": "token1_symbol",
+            "expr": "source.token1_symbol",
+            "displayName": "Token 1 Symbol"
+          },
+          {
+            "name": "token1_name",
+            "expr": "source.token1_name",
+            "displayName": "Token 1 Name"
+          },
+          {
+            "name": "pair_symbol",
+            "expr": "source.pair_symbol",
+            "displayName": "Pair Symbol"
+          },
+          {
+            "name": "pool_age_days",
+            "expr": "source.pool_age_days",
+            "displayName": "Pool Age Days"
+          },
+          {
+            "name": "is_empty_pool",
+            "expr": "source.is_empty_pool",
+            "displayName": "Is Empty Pool"
+          },
+          {
+            "name": "tvl_tier",
+            "expr": "source.tvl_tier",
+            "displayName": "Tvl Tier"
+          },
+          {
+            "name": "network",
+            "expr": "source.network",
+            "displayName": "Network"
+          },
+          {
+            "name": "protocol_version",
+            "expr": "source.protocol_version",
+            "displayName": "Protocol Version"
+          },
+          {
+            "name": "_load_timestamp_gold",
+            "expr": "source._load_timestamp_gold",
+            "displayName": "Load Timestamp Gold"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "10d81222",
+      "displayName": "pools_details",
+      "queryLines": [
+        "SELECT\r\n",
+        "    *,\r\n",
+        "    CONCAT(\"https://app.uniswap.org/explore/pools/ethereum/\",pk_pool_contract) AS full_uniswap_url\r\n",
+        "FROM dim_pools\r\n",
+        "WHERE tvl_tier IN (\"high_tvl\",\"medium_tvl\", \"low_tvl\")"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "4d9bbd67",
+      "displayName": "pools_top_tvl",
+      "queryLines": [
+        "SELECT *\r\n",
+        "FROM dim_pools\r\n",
+        "WHERE token0_symbol != \"ease.org\"\r\n",
+        "ORDER BY total_value_locked_USD DESC\r\n",
+        "LIMIT 20"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "c8858d81",
+      "displayName": "pools_top_volume",
+      "queryLines": [
+        "SELECT *\r\n",
+        "FROM dim_pools\r\n",
+        "WHERE token0_symbol != \"ease.org\"\r\n",
+        "ORDER BY volume_USD DESC\r\n",
+        "LIMIT 20"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "2bba6e57",
+      "displayName": "fact_swaps",
+      "config": {
+        "version": "1.1",
+        "source": "uniswap.gold.fact_swaps",
+        "dimensions": [
+          {
+            "name": "pk_swap_id",
+            "expr": "source.pk_swap_id",
+            "displayName": "Pk Swap Id"
+          },
+          {
+            "name": "fk_pool_contract",
+            "expr": "source.fk_pool_contract",
+            "displayName": "Fk Pool Contract"
+          },
+          {
+            "name": "fk_token0_contract",
+            "expr": "source.fk_token0_contract",
+            "displayName": "Fk Token 0 Contract"
+          },
+          {
+            "name": "fk_token1_contract",
+            "expr": "source.fk_token1_contract",
+            "displayName": "Fk Token 1 Contract"
+          },
+          {
+            "name": "transaction_id",
+            "expr": "source.transaction_id",
+            "displayName": "Transaction Id"
+          },
+          {
+            "name": "sender_address",
+            "expr": "source.sender_address",
+            "displayName": "Sender Address"
+          },
+          {
+            "name": "recipient_address",
+            "expr": "source.recipient_address",
+            "displayName": "Recipient Address"
+          },
+          {
+            "name": "amount_USD",
+            "expr": "source.amount_USD",
+            "displayName": "Amount USD"
+          },
+          {
+            "name": "amount_token0",
+            "expr": "source.amount_token0",
+            "displayName": "Amount Token 0"
+          },
+          {
+            "name": "amount_token1",
+            "expr": "source.amount_token1",
+            "displayName": "Amount Token 1"
+          },
+          {
+            "name": "after_swap_tick_idx",
+            "expr": "source.after_swap_tick_idx",
+            "displayName": "After Swap Tick Idx"
+          },
+          {
+            "name": "block_timestamp",
+            "expr": "source.block_timestamp",
+            "displayName": "Block Timestamp"
+          },
+          {
+            "name": "swap_tier",
+            "expr": "source.swap_tier",
+            "displayName": "Swap Tier"
+          },
+          {
+            "name": "_load_timestamp_gold",
+            "expr": "source._load_timestamp_gold",
+            "displayName": "Load Timestamp Gold"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          },
+          {
+            "name": "Count Distinct Sender",
+            "expr": "COUNT(DISTINCT source.sender_address)",
+            "displayName": "Count Distinct Sender"
+          },
+          {
+            "name": "SUM amount USD",
+            "expr": "SUM(source.amount_USD)",
+            "displayName": "SUM amount USD"
+          }
+        ]
+      }
+    },
+    {
+      "name": "30c4e129",
+      "displayName": "swaps_join_dims",
+      "queryLines": [
+        "SELECT\r\n",
+        "    swaps.*,\r\n",
+        "    pools.pair_symbol AS pool_pair_symbol,\r\n",
+        "    token0.name AS token0_name,\r\n",
+        "    token1.name AS token1_name\r\n",
+        "FROM fact_swaps AS swaps\r\n",
+        "LEFT JOIN dim_pools AS pools\r\n",
+        "    ON swaps.fk_pool_contract = pools.pk_pool_contract\r\n",
+        "LEFT JOIN dim_tokens AS token0\r\n",
+        "    ON swaps.fk_token0_contract = token0.pk_token_contract\r\n",
+        "LEFT JOIN dim_tokens AS token1\r\n",
+        "    ON swaps.fk_token1_contract = token1.pk_token_contract"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "797c19a7",
+      "displayName": "swaps_whale_count",
+      "queryLines": [
+        "SELECT COUNT(*)\r\n",
+        "FROM fact_swaps\r\n",
+        "WHERE swap_tier = \"whale\""
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "9f2f46ac",
+      "displayName": "Pool Contract Swap Counts Summary Dataset",
+      "queryLines": [
+        "select poo.pk_pool_contract, poo.tx_count, count(faa.pk_swap_id)\r\n",
+        "from dim_pools poo\r\n",
+        "left join fact_swaps faa\r\n",
+        "on poo.pk_pool_contract = faa.fk_pool_contract\r\n",
+        "-- where poo.pk_pool_contract = \"0xe331de28cd81b768c19a366b0e4e4675c45ec2da\"\r\n",
+        "group by poo.pk_pool_contract, tx_count\r\n",
+        "having count(faa.pk_swap_id) > 1"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "a44b186e",
+      "displayName": "swaps_volume_last_30days",
+      "queryLines": [
+        "SELECT SUM(amount_USD) AS volume_last_30_days\r\n",
+        "FROM fact_swaps\r\n",
+        "WHERE block_timestamp >= CURRENT_DATE - INTERVAL 30 DAYS\r\n"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    }
+  ],
   "pages": [
     {
+      "name": "6c447f95",
+      "displayName": "Swaps",
+      "layout": [
+        {
+          "widget": {
+            "name": "b30d66b8",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:72px;line-height:1.5\">***SWAPS***</span>  </span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2bba6e57",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total swaps"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "979af2fb",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\">DISCLAIMER:  Swaps has been prunned due to the massive amount, this data dont reflect the real metrics</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 2,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "63b2fbed",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2bba6e57",
+                  "fields": [
+                    {
+                      "name": "measure(Count Distinct Sender)",
+                      "expression": "MEASURE(`Count Distinct Sender`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Unique traders"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Count Distinct Sender)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "648ce833",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "797c19a7",
+                  "fields": [
+                    {
+                      "name": "sum(count(1))",
+                      "expression": "SUM(`count(1)`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Whale swaps counter (100k$+)"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(count(1))"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "71ed75da",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2bba6e57",
+                  "fields": [
+                    {
+                      "name": "avg(amount_USD)",
+                      "expression": "AVG(`amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Global average swap size"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(amount_USD)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 6,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "6f27cd9b",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block;\"><span style=\"font-size: 18px;\">**GLOBAL STATS**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 5,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "ad90079b",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">**DETAILS**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 2,
+            "width": 5,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "8301be9e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a44b186e",
+                  "fields": [
+                    {
+                      "name": "volume_last_30_days",
+                      "expression": "`volume_last_30_days`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Volume in last 30 days"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "volume_last_30_days"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "count-of-swaps",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2bba6e57",
+                  "fields": [
+                    {
+                      "name": "countdistinct(pk_swap_id)",
+                      "expression": "COUNT(DISTINCT `pk_swap_id`)"
+                    },
+                    {
+                      "name": "swap_tier",
+                      "expression": "`swap_tier`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "COUNT OF SWAPS PER TVL TIER"
+              },
+              "widgetType": "funnel",
+              "encodings": {
+                "x": {
+                  "fieldName": "countdistinct(pk_swap_id)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "swap_tier",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 2,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "average-swap",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2bba6e57",
+                  "fields": [
+                    {
+                      "name": "weekly(block_timestamp)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `block_timestamp`)"
+                    },
+                    {
+                      "name": "avg(amount_USD)",
+                      "expression": "AVG(`amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Weekly AVERAGE SWAP SIZE"
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(block_timestamp)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(amount_USD)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 9,
+            "width": 2,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "volume-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2bba6e57",
+                  "fields": [
+                    {
+                      "name": "measure(SUM amount USD)",
+                      "expression": "MEASURE(`SUM amount USD`)"
+                    },
+                    {
+                      "name": "swap_tier",
+                      "expression": "`swap_tier`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "VOLUME BY TVL TIER DISTRIBUTION"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "measure(SUM amount USD)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "swap_tier",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 7,
+            "width": 2,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "date",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f15425cfee198ca9da6c135158b9f7_weekly(block_timestamp)",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "weekly(block_timestamp)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `block_timestamp`)"
+                    },
+                    {
+                      "name": "weekly(block_timestamp)_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "WEEK SELECTOR"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "weekly(block_timestamp)",
+                    "displayName": "WEEKLY(block_timestamp)",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f15425cfee198ca9da6c135158b9f7_weekly(block_timestamp)"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "pool-pair-symbols",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f15425cfee198ca9da6c135158b9f7_pool_pair_symbol",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "pool_pair_symbol",
+                      "expression": "`pool_pair_symbol`"
+                    },
+                    {
+                      "name": "pool_pair_symbol_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "POOL PAIR SYMBOLS"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "pool_pair_symbol",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f15425cfee198ca9da6c135158b9f7_pool_pair_symbol"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "swap-details-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "token0_name",
+                      "expression": "`token0_name`"
+                    },
+                    {
+                      "name": "token1_name",
+                      "expression": "`token1_name`"
+                    },
+                    {
+                      "name": "amount_USD",
+                      "expression": "`amount_USD`"
+                    },
+                    {
+                      "name": "sender_address",
+                      "expression": "`sender_address`"
+                    },
+                    {
+                      "name": "recipient_address",
+                      "expression": "`recipient_address`"
+                    },
+                    {
+                      "name": "block_timestamp",
+                      "expression": "`block_timestamp`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "SWAP DETAILS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "token0_name"
+                  },
+                  {
+                    "fieldName": "token1_name"
+                  },
+                  {
+                    "fieldName": "amount_USD"
+                  },
+                  {
+                    "fieldName": "sender_address"
+                  },
+                  {
+                    "fieldName": "recipient_address"
+                  },
+                  {
+                    "fieldName": "block_timestamp"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 2
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 10,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "ac8a0a75",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total swaps"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 6,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "swap-size",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f15425cfee198ca9da6c135158b9f7_swap_tier",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "swap_tier",
+                      "expression": "`swap_tier`"
+                    },
+                    {
+                      "name": "swap_tier_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "SWAP SIZE"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "swap_tier",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f15425cfee198ca9da6c135158b9f7_swap_tier"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 3,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "be02853f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "sum(amount_USD)",
+                      "expression": "SUM(`amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Volume"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(amount_USD)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 8,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "353dfaab",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "avg(amount_USD)",
+                      "expression": "AVG(`amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Average swap size"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(amount_USD)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 5,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "40e36261",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "30c4e129",
+                  "fields": [
+                    {
+                      "name": "countdistinct(sender_address)",
+                      "expression": "COUNT(DISTINCT `sender_address`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Unique traders"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(sender_address)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 6,
+            "width": 2,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
       "name": "e1bfd963",
-      "displayName": "Untitled page",
-      "pageType": "PAGE_TYPE_CANVAS"
+      "displayName": "Pools",
+      "layout": [
+        {
+          "widget": {
+            "name": "a2be539f",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:72px;line-height:1.5\">***POOLS***</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "2cac8a70",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">**GLOBAL STATS**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "6483de06",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block;\"><span style=\"font-size: 18px;\">**POOL SELECTOR**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "p",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f563f6be",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "POOL COUNTER"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 3,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "top",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "4d9bbd67",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "token0_name",
+                      "expression": "`token0_name`"
+                    },
+                    {
+                      "name": "token1_name",
+                      "expression": "`token1_name`"
+                    },
+                    {
+                      "name": "total_value_locked_USD",
+                      "expression": "`total_value_locked_USD`"
+                    },
+                    {
+                      "name": "fee_tier_pct",
+                      "expression": "`fee_tier_pct`"
+                    },
+                    {
+                      "name": "tx_count",
+                      "expression": "`tx_count`"
+                    },
+                    {
+                      "name": "network",
+                      "expression": "`network`"
+                    },
+                    {
+                      "name": "protocol_version",
+                      "expression": "`protocol_version`"
+                    },
+                    {
+                      "name": "pool_age_days",
+                      "expression": "`pool_age_days`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOP POOLS TVL"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol"
+                  },
+                  {
+                    "fieldName": "token0_name"
+                  },
+                  {
+                    "fieldName": "token1_name"
+                  },
+                  {
+                    "fieldName": "total_value_locked_USD"
+                  },
+                  {
+                    "fieldName": "fee_tier_pct"
+                  },
+                  {
+                    "fieldName": "tx_count"
+                  },
+                  {
+                    "fieldName": "network"
+                  },
+                  {
+                    "fieldName": "protocol_version"
+                  },
+                  {
+                    "fieldName": "pool_age_days"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "bab75a4f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c8858d81",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "volume_USD",
+                      "expression": "`volume_USD`"
+                    },
+                    {
+                      "name": "fee_tier_pct",
+                      "expression": "`fee_tier_pct`"
+                    },
+                    {
+                      "name": "tx_count",
+                      "expression": "`tx_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOP POOLS VOLUME"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol"
+                  },
+                  {
+                    "fieldName": "volume_USD"
+                  },
+                  {
+                    "fieldName": "fee_tier_pct"
+                  },
+                  {
+                    "fieldName": "tx_count"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "ti1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f563f6be",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "tvl_tier",
+                      "expression": "`tvl_tier`"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`tvl_tier` IN ('high_tvl', 'low_tvl', 'medium_tvl')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "TIER DISTRIBUTION (excluding dust tvl pools)"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": " "
+                },
+                "color": {
+                  "fieldName": "tvl_tier",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 11,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "contract-filter",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1542ae012122f985c52764efb59d5_pk_pool_contract",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "pk_pool_contract",
+                      "expression": "`pk_pool_contract`"
+                    },
+                    {
+                      "name": "pk_pool_contract_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "disallowAll": false,
+              "frame": {
+                "showTitle": true,
+                "title": "CONTRACT FILTER"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "pk_pool_contract",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1542ae012122f985c52764efb59d5_pk_pool_contract"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 3,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "selec",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "tvl_tier",
+                      "expression": "`tvl_tier`"
+                    },
+                    {
+                      "name": "fee_tier_pct",
+                      "expression": "`fee_tier_pct`"
+                    },
+                    {
+                      "name": "fees_USD",
+                      "expression": "`fees_USD`"
+                    },
+                    {
+                      "name": "pk_pool_contract",
+                      "expression": "`pk_pool_contract`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "SELECTOR"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "useForSearch": true
+                  },
+                  {
+                    "fieldName": "tvl_tier"
+                  },
+                  {
+                    "fieldName": "fee_tier_pct"
+                  },
+                  {
+                    "fieldName": "fees_USD"
+                  },
+                  {
+                    "fieldName": "pk_pool_contract"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "f868c27a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "token0_name",
+                      "expression": "`token0_name`"
+                    },
+                    {
+                      "name": "token1_name",
+                      "expression": "`token1_name`"
+                    },
+                    {
+                      "name": "full_uniswap_url",
+                      "expression": "`full_uniswap_url`"
+                    },
+                    {
+                      "name": "network",
+                      "expression": "`network`"
+                    },
+                    {
+                      "name": "protocol_version",
+                      "expression": "`protocol_version`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "token0_name"
+                  },
+                  {
+                    "fieldName": "token1_name"
+                  },
+                  {
+                    "fieldName": "full_uniswap_url"
+                  },
+                  {
+                    "fieldName": "network"
+                  },
+                  {
+                    "fieldName": "protocol_version"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 13,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "days-since-creation",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "pool_age_days",
+                      "expression": "`pool_age_days`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Days since creation"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "pool_age_days"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 11,
+            "y": 11,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "to-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "sum(total_value_locked_USD)",
+                      "expression": "SUM(`total_value_locked_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Value Locked in USD"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_value_locked_USD)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 11,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "640af425",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "tx_count",
+                      "expression": "`tx_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Transactions"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "tx_count"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 11,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "77fc2129",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "volume_USD",
+                      "expression": "`volume_USD`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Volume in USD"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "volume_USD"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 11,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "ca1366a0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "10d81222",
+                  "fields": [
+                    {
+                      "name": "fees_USD",
+                      "expression": "`fees_USD`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Fees generated"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "fees_USD"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 11,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "e5136406",
+      "displayName": "Tokens",
+      "layout": [
+        {
+          "widget": {
+            "name": "56eeb1ea",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;\">***TOKENS***</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "symbol-filter",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f158226f1319b693b03734ac5b91eb_pk_token_contract",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "pk_token_contract",
+                      "expression": "`pk_token_contract`"
+                    },
+                    {
+                      "name": "pk_token_contract_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "CONTRACT FILTER"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "pk_token_contract",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f158226f1319b693b03734ac5b91eb_pk_token_contract"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 3,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "t1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "08b1aaa1",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "token_type",
+                      "expression": "`token_type`"
+                    },
+                    {
+                      "name": "tx_count",
+                      "expression": "`tx_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "MOST TRADED TOKENS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "symbol"
+                  },
+                  {
+                    "fieldName": "name"
+                  },
+                  {
+                    "fieldName": "token_type"
+                  },
+                  {
+                    "fieldName": "tx_count"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "978eb9fb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "71d5b431",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "token_type",
+                      "expression": "`token_type`"
+                    },
+                    {
+                      "name": "volume_USD",
+                      "expression": "`volume_USD`"
+                    },
+                    {
+                      "name": "fees_USD",
+                      "expression": "`fees_USD`"
+                    },
+                    {
+                      "name": "total_value_locked_USD",
+                      "expression": "`total_value_locked_USD`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOP TOKENS PER VOLUME"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "symbol"
+                  },
+                  {
+                    "fieldName": "name"
+                  },
+                  {
+                    "fieldName": "token_type"
+                  },
+                  {
+                    "fieldName": "volume_USD"
+                  },
+                  {
+                    "fieldName": "fees_USD"
+                  },
+                  {
+                    "fieldName": "total_value_locked_USD"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "token-selector-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "is_low_tvl_token",
+                      "expression": "`is_low_tvl_token`"
+                    },
+                    {
+                      "name": "network",
+                      "expression": "`network`"
+                    },
+                    {
+                      "name": "volume_USD",
+                      "expression": "`volume_USD`"
+                    },
+                    {
+                      "name": "pk_token_contract",
+                      "expression": "`pk_token_contract`"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`is_low_tvl_token` IN (`is_low_tvl_token`) OR TRUE"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "SELECTOR"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "symbol",
+                    "useForSearch": true
+                  },
+                  {
+                    "fieldName": "name",
+                    "useForSearch": true
+                  },
+                  {
+                    "fieldName": "is_low_tvl_token",
+                    "useForSearch": false
+                  },
+                  {
+                    "fieldName": "network"
+                  },
+                  {
+                    "fieldName": "volume_USD",
+                    "useForSearch": false
+                  },
+                  {
+                    "fieldName": "pk_token_contract"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "t3",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "network",
+                      "expression": "`network`"
+                    },
+                    {
+                      "name": "protocol_version",
+                      "expression": "`protocol_version`"
+                    },
+                    {
+                      "name": "token_type",
+                      "expression": "`token_type`"
+                    },
+                    {
+                      "name": "full_uniswap_url",
+                      "expression": "`full_uniswap_url`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOKEN DETAILS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "symbol"
+                  },
+                  {
+                    "fieldName": "name"
+                  },
+                  {
+                    "fieldName": "network"
+                  },
+                  {
+                    "fieldName": "protocol_version"
+                  },
+                  {
+                    "fieldName": "token_type"
+                  },
+                  {
+                    "fieldName": "full_uniswap_url"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 14,
+            "width": 6,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "t2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e791ac38",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOKEN COUNTER"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 3,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "volume-i",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "volume_USD",
+                      "expression": "`volume_USD`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Volume"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "volume_USD"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 12,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "total_value_locked_USD",
+                      "expression": "`total_value_locked_USD`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Value Locked in Pools"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_value_locked_USD"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 12,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "generated",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "fees_USD",
+                      "expression": "`fees_USD`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Generated Fees"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "fees_USD"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 12,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f8a891fc",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block;\"><span style=\"font-size: 18px;\">**GLOBAL STATS**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "t4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "be1c301e",
+                  "fields": [
+                    {
+                      "name": "tx_count",
+                      "expression": "`tx_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Transactions"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "tx_count"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 11,
+            "y": 12,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "3054cf3e",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block;\"><span style=\"font-size: 18px;\">**TOKEN SELECTOR**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a7068982",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">**DETAILS**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 11,
+            "width": 6,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
     }
   ],
   "uiSettings": {
+    "locale": "en-US",
     "theme": {
-      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+      "canvasBackgroundColor": {
+        "light": "#FAFAFB",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "widgetBorderColor": {
+        "dark": "#CE35D1"
+      },
+      "fontColor": {
+        "light": "#11171C",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#8ACAFF"
+      },
+      "visualizationColors": [
+        "#CE35D1",
+        "#077A9D",
+        "#FFAB00",
+        "#00A972",
+        "#FF3621",
+        "#8BCAE7",
+        "#AB4057",
+        "#99DDB4",
+        "#FCA4A1",
+        "#919191",
+        "#BF7080"
+      ],
+      "widgetHeaderAlignment": "CENTER",
+      "textBoxVerticalAlign": "VERTICAL_ALIGN_CENTER"
     },
     "applyModeEnabled": false
   }

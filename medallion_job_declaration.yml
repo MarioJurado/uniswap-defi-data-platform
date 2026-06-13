@@ -12,9 +12,9 @@ resources:
         no_alert_for_skipped_runs: true
         no_alert_for_canceled_runs: true
       schedule:
-        quartz_cron_expression: 44 0 21 ? * Sun
+        quartz_cron_expression: 00 0 21 ? * SUN,WED
         timezone_id: UTC
-        pause_status: PAUSED
+        pause_status: UNPAUSED
       tasks:
         - task_key: main_orchestrator
           notebook_task:

@@ -215,11 +215,6 @@
             "displayName": "Volume Token 1"
           },
           {
-            "name": "liquidity",
-            "expr": "source.liquidity",
-            "displayName": "Liquidity"
-          },
-          {
             "name": "tx_count",
             "expr": "source.tx_count",
             "displayName": "Tx Count"
@@ -469,21 +464,6 @@
       "schema": "gold"
     },
     {
-      "name": "9f2f46ac",
-      "displayName": "Pool Contract Swap Counts Summary Dataset",
-      "queryLines": [
-        "select poo.pk_pool_contract, poo.tx_count, count(faa.pk_swap_id)\r\n",
-        "from dim_pools poo\r\n",
-        "left join fact_swaps faa\r\n",
-        "on poo.pk_pool_contract = faa.fk_pool_contract\r\n",
-        "-- where poo.pk_pool_contract = \"0xe331de28cd81b768c19a366b0e4e4675c45ec2da\"\r\n",
-        "group by poo.pk_pool_contract, tx_count\r\n",
-        "having count(faa.pk_swap_id) > 1"
-      ],
-      "catalog": "uniswap",
-      "schema": "gold"
-    },
-    {
       "name": "a44b186e",
       "displayName": "swaps_volume_last_30days",
       "queryLines": [
@@ -493,9 +473,1955 @@
       ],
       "catalog": "uniswap",
       "schema": "gold"
+    },
+    {
+      "name": "d47bf3dd",
+      "displayName": "dim_positions",
+      "config": {
+        "version": "1.1",
+        "source": "uniswap.gold.dim_positions",
+        "dimensions": [
+          {
+            "name": "pk_position_id",
+            "expr": "source.pk_position_id",
+            "displayName": "Pk Position Id"
+          },
+          {
+            "name": "tx_id",
+            "expr": "source.tx_id",
+            "displayName": "Tx Id"
+          },
+          {
+            "name": "pool_id",
+            "expr": "source.pool_id",
+            "displayName": "Pool Id"
+          },
+          {
+            "name": "token0_id",
+            "expr": "source.token0_id",
+            "displayName": "Token 0 Id"
+          },
+          {
+            "name": "token1_id",
+            "expr": "source.token1_id",
+            "displayName": "Token 1 Id"
+          },
+          {
+            "name": "tick_lower_id",
+            "expr": "source.tick_lower_id",
+            "displayName": "Tick Lower Id"
+          },
+          {
+            "name": "tick_upper_id",
+            "expr": "source.tick_upper_id",
+            "displayName": "Tick Upper Id"
+          },
+          {
+            "name": "owner_address",
+            "expr": "source.owner_address",
+            "displayName": "Owner Address"
+          },
+          {
+            "name": "deposited_token0",
+            "expr": "source.deposited_token0",
+            "displayName": "Deposited Token 0"
+          },
+          {
+            "name": "deposited_token1",
+            "expr": "source.deposited_token1",
+            "displayName": "Deposited Token 1"
+          },
+          {
+            "name": "withdrawn_token0",
+            "expr": "source.withdrawn_token0",
+            "displayName": "Withdrawn Token 0"
+          },
+          {
+            "name": "withdrawn_token1",
+            "expr": "source.withdrawn_token1",
+            "displayName": "Withdrawn Token 1"
+          },
+          {
+            "name": "collected_fees_token0",
+            "expr": "source.collected_fees_token0",
+            "displayName": "Collected Fees Token 0"
+          },
+          {
+            "name": "collected_fees_token1",
+            "expr": "source.collected_fees_token1",
+            "displayName": "Collected Fees Token 1"
+          },
+          {
+            "name": "tx_timestamp",
+            "expr": "source.tx_timestamp",
+            "displayName": "Tx Timestamp"
+          },
+          {
+            "name": "tick_upper_idx",
+            "expr": "source.tick_upper_idx",
+            "displayName": "Tick Upper Idx"
+          },
+          {
+            "name": "tick_lower_idx",
+            "expr": "source.tick_lower_idx",
+            "displayName": "Tick Lower Idx"
+          },
+          {
+            "name": "position_width_ticks",
+            "expr": "source.position_width_ticks",
+            "displayName": "Position Width Ticks"
+          },
+          {
+            "name": "width_category",
+            "expr": "source.width_category",
+            "displayName": "Width Category"
+          },
+          {
+            "name": "position_age_days",
+            "expr": "source.position_age_days",
+            "displayName": "Position Age Days"
+          },
+          {
+            "name": "_load_timestamp_gold",
+            "expr": "source._load_timestamp_gold",
+            "displayName": "Load Timestamp Gold"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          },
+          {
+            "name": "Count Distinct owners",
+            "expr": "COUNT(DISTINCT owner_address)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "c300c2ad",
+      "displayName": "positions_join_pools",
+      "queryLines": [
+        "SELECT\r\n",
+        "    positions.*,\r\n",
+        "    pools.pair_symbol,\r\n",
+        "    pools.protocol_version,\r\n",
+        "    pools.network,\r\n",
+        "    token0.name AS token0_name,\r\n",
+        "    token1.name AS token1_name\r\n",
+        "FROM dim_positions AS positions\r\n",
+        "LEFT JOIN dim_pools AS pools\r\n",
+        "    ON positions.pool_id = pools.pk_pool_contract\r\n",
+        "LEFT JOIN dim_tokens AS token0\r\n",
+        "    ON positions.token0_id = token0.pk_token_contract\r\n",
+        "LEFT JOIN dim_tokens AS token1\r\n",
+        "    ON positions.token1_id = token1.pk_token_contract"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "8ebe42bd",
+      "displayName": "positions_newest",
+      "queryLines": [
+        "SELECT \r\n",
+        "    pos.*,\r\n",
+        "    pools.pair_symbol\r\n",
+        "FROM dim_positions AS pos\r\n",
+        "LEFT JOIN dim_pools AS pools\r\n",
+        "    ON pos.pool_id = pools.pk_pool_contract\r\n",
+        "ORDER BY pos.tx_timestamp DESC LIMIT 10"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "326ccaab",
+      "displayName": "positions_top_pools",
+      "queryLines": [
+        "\r\n",
+        "WITH cte_groupby AS (\r\n",
+        "    SELECT\r\n",
+        "        pools.pk_pool_contract, count(pos.pk_position_id) AS count_positions_per_pool\r\n",
+        "    FROM dim_positions AS pos\r\n",
+        "    LEFT JOIN dim_pools AS pools\r\n",
+        "        ON pos.pool_id = pools.pk_pool_contract\r\n",
+        "    GROUP BY pools.pk_pool_contract\r\n",
+        ")\r\n",
+        "SELECT \r\n",
+        "    source.*,\r\n",
+        "    pools.pair_symbol\r\n",
+        "FROM cte_groupby AS source\r\n",
+        "INNER JOIN dim_pools AS pools\r\n",
+        "    ON source.pk_pool_contract = pools.pk_pool_contract\r\n",
+        "ORDER BY count_positions_per_pool DESC\r\n",
+        "LIMIT 10\r\n",
+        "\r\n"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "c0962137",
+      "displayName": "positions_top_owners",
+      "queryLines": [
+        "WITH cte_top_lps AS (\r\n",
+        "    SELECT\r\n",
+        "        owner_address, count(pool_id) AS count\r\n",
+        "    FROM dim_positions\r\n",
+        "    WHERE owner_address != \"0x0000000000000000000000000000000000000000\"\r\n",
+        "    GROUP BY owner_address\r\n",
+        ")\r\n",
+        "SELECT \r\n",
+        "    *,\r\n",
+        "    CONCAT(\"https://etherscan.io/address/\", owner_address) AS scan_lp_url\r\n",
+        "FROM cte_top_lps\r\n",
+        "ORDER BY count DESC\r\n",
+        "LIMIT 20"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
+    },
+    {
+      "name": "f4c783a9",
+      "displayName": "fact_liquidity_events",
+      "config": {
+        "version": "1.1",
+        "source": "uniswap.gold.fact_liquidity_events",
+        "dimensions": [
+          {
+            "name": "pk_event_id",
+            "expr": "source.pk_event_id",
+            "displayName": "Pk Event Id"
+          },
+          {
+            "name": "pool_id",
+            "expr": "source.pool_id",
+            "displayName": "Pool Id"
+          },
+          {
+            "name": "token0_id",
+            "expr": "source.token0_id",
+            "displayName": "Token 0 Id"
+          },
+          {
+            "name": "token1_id",
+            "expr": "source.token1_id",
+            "displayName": "Token 1 Id"
+          },
+          {
+            "name": "tx_id",
+            "expr": "source.tx_id",
+            "displayName": "Tx Id"
+          },
+          {
+            "name": "tick_lower_id",
+            "expr": "source.tick_lower_id",
+            "displayName": "Tick Lower Id"
+          },
+          {
+            "name": "tick_upper_id",
+            "expr": "source.tick_upper_id",
+            "displayName": "Tick Upper Id"
+          },
+          {
+            "name": "owner_address",
+            "expr": "source.owner_address",
+            "displayName": "Owner Address"
+          },
+          {
+            "name": "sender_address",
+            "expr": "source.sender_address",
+            "displayName": "Sender Address"
+          },
+          {
+            "name": "origin_address",
+            "expr": "source.origin_address",
+            "displayName": "Origin Address"
+          },
+          {
+            "name": "token0_amount",
+            "expr": "source.token0_amount",
+            "displayName": "Token 0 Amount"
+          },
+          {
+            "name": "token1_amount",
+            "expr": "source.token1_amount",
+            "displayName": "Token 1 Amount"
+          },
+          {
+            "name": "usd_amount",
+            "expr": "source.usd_amount",
+            "displayName": "Usd Amount"
+          },
+          {
+            "name": "timestamp",
+            "expr": "source.timestamp",
+            "displayName": "Timestamp"
+          },
+          {
+            "name": "event_type",
+            "expr": "source.event_type",
+            "displayName": "Event Type"
+          },
+          {
+            "name": "liquidity_delta_usd",
+            "expr": "source.liquidity_delta_usd",
+            "displayName": "Liquidity Delta Usd"
+          },
+          {
+            "name": "event_size_category",
+            "expr": "source.event_size_category",
+            "displayName": "Event Size Category"
+          },
+          {
+            "name": "_load_timestamp_gold",
+            "expr": "source._load_timestamp_gold",
+            "displayName": "Load Timestamp Gold"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          },
+          {
+            "name": "Total liquidity added",
+            "expr": "SUM(CASE \r\n        WHEN event_type = \"mint\" \r\n        THEN usd_amount\r\n    END)",
+            "displayName": "Total liquidity added"
+          },
+          {
+            "name": "Total liquidity removed",
+            "expr": "SUM(CASE \r\n        WHEN event_type = \"burn\" \r\n        THEN usd_amount\r\n    END)",
+            "displayName": "Total liquidity removed"
+          },
+          {
+            "name": "Net liquidity flow",
+            "expr": "SUM(liquidity_delta_usd)",
+            "displayName": "Net liquidity flow"
+          }
+        ]
+      }
+    },
+    {
+      "name": "a245d8da",
+      "displayName": "liquidity_events_most_recent",
+      "queryLines": [
+        "SELECT\r\n",
+        "    eve.*,\r\n",
+        "    pool.pair_symbol\r\n",
+        "\r\n",
+        "FROM fact_liquidity_events AS eve\r\n",
+        "LEFT JOIN dim_pools AS pool\r\n",
+        "    ON eve.pool_id = pool.pk_pool_contract\r\n",
+        "ORDER BY eve.timestamp DESC\r\n",
+        "LIMIT 20"
+      ],
+      "catalog": "uniswap",
+      "schema": "gold"
     }
   ],
   "pages": [
+    {
+      "name": "53e17bd9",
+      "displayName": "Liquidity Events",
+      "layout": [
+        {
+          "widget": {
+            "name": "1260b78d",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;font-family: Georgia;color: #FE37C7;\">***LIQUIDITY EVENTS***</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "date-range",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1668158fc1a6da22240182c35f3e4_timestamp",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "timestamp",
+                      "expression": "`timestamp`"
+                    },
+                    {
+                      "name": "timestamp_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Date range"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "timestamp",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1668158fc1a6da22240182c35f3e4_timestamp"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 2,
+            "width": 4,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "total-liquidity-added",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "measure(Total liquidity added)",
+                      "expression": "MEASURE(`Total liquidity added`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL LIQUIDITY ADDED"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Total liquidity added)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "b5a3c0f5",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "measure(Total liquidity removed)",
+                      "expression": "MEASURE(`Total liquidity removed`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL LIQUIDITY REMOVED"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Total liquidity removed)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 2,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "955fff90",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "measure(Net liquidity flow)",
+                      "expression": "MEASURE(`Net liquidity flow`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL NET LIQUIDITY FLOW"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Net liquidity flow)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "net-liquidity",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "weekly(timestamp)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `timestamp`)"
+                    },
+                    {
+                      "name": "measure(Net liquidity flow)",
+                      "expression": "MEASURE(`Net liquidity flow`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "NET LIQUIDITY FLOW OVER TIME"
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(timestamp)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Net liquidity flow)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "inflows",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "weekly(timestamp)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `timestamp`)"
+                    },
+                    {
+                      "name": "measure(Total liquidity added)",
+                      "expression": "MEASURE(`Total liquidity added`)"
+                    },
+                    {
+                      "name": "measure(Total liquidity removed)",
+                      "expression": "MEASURE(`Total liquidity removed`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "showTitle": true,
+                "title": "INFLOWS VS OUTFLOWS"
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "measure(Total liquidity added)"
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "measure(Total liquidity removed)"
+                      }
+                    ]
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "x": {
+                  "fieldName": "weekly(timestamp)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 5,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "event-size-distribution",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "event_size_category",
+                      "expression": "`event_size_category`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "EVENT SIZE DISTRIBUTION"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "event_size_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "whale-detector",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "timestamp",
+                      "expression": "`timestamp`"
+                    },
+                    {
+                      "name": "sum(usd_amount)",
+                      "expression": "SUM(`usd_amount`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`event_size_category` IN ('whale')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "WHALE DETECTOR"
+              },
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "timestamp",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(usd_amount)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 11,
+            "width": 5,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "total-events",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL EVENTS"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 8,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "co",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "event_type",
+                      "expression": "`event_type`"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "COUNT OF EVENTS PER TYPE"
+              },
+              "widgetType": "funnel",
+              "encodings": {
+                "x": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Count of events"
+                },
+                "y": {
+                  "fieldName": "event_type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "color": {
+                  "fieldName": "event_type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 5,
+            "width": 2,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "most-recent-liquidity-events",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a245d8da",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "event_type",
+                      "expression": "`event_type`"
+                    },
+                    {
+                      "name": "usd_amount",
+                      "expression": "`usd_amount`"
+                    },
+                    {
+                      "name": "timestamp",
+                      "expression": "`timestamp`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "MOST RECENT LIQUIDITY EVENTS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
+                  },
+                  {
+                    "fieldName": "event_type",
+                    "displayName": "Event type"
+                  },
+                  {
+                    "fieldName": "usd_amount",
+                    "displayName": "Amount in $"
+                  },
+                  {
+                    "fieldName": "timestamp"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 11,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "ec7943ae",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f4c783a9",
+                  "fields": [
+                    {
+                      "name": "sum(usd_amount)",
+                      "expression": "SUM(`usd_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL VOLUME $"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(usd_amount)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 5,
+            "width": 1,
+            "height": 3
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "427f1669",
+      "displayName": "Liquidty Providers",
+      "layout": [
+        {
+          "widget": {
+            "name": "5ec1156d",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;font-family: Georgia;color: #FE37C7;\">***LIQUIDITY PROVIDERS***</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "owner-address",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1670eeed01af997a623a350760277_owner_address",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "owner_address",
+                      "expression": "`owner_address`"
+                    },
+                    {
+                      "name": "owner_address_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Owner address"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "owner_address",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1670eeed01af997a623a350760277_owner_address"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "6b363d33",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">**GLOBAL STATS**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "8b939705",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:18px\">**POSITION SELECTOR**</span></span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "total-po",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d47bf3dd",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL POSITIONS"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "disti",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d47bf3dd",
+                  "fields": [
+                    {
+                      "name": "measure(Count Distinct owners)",
+                      "expression": "MEASURE(`Count Distinct owners`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "UNIQUE POSITION OWNERS"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Count Distinct owners)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "records",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d47bf3dd",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "width_category",
+                      "expression": "`width_category`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "DISTRIBUTION OF POSITIONS PER WIDTH CATEGORY"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "width_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 3,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "9c46af3f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d47bf3dd",
+                  "fields": [
+                    {
+                      "name": "median(position_age_days)",
+                      "expression": "MEDIAN(`position_age_days`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "MEDIAN POSITION AGE IN DAYS"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "median(position_age_days)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "top-positions",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "8ebe42bd",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "deposited_token0",
+                      "expression": "`deposited_token0`"
+                    },
+                    {
+                      "name": "deposited_token1",
+                      "expression": "`deposited_token1`"
+                    },
+                    {
+                      "name": "position_age_days",
+                      "expression": "`position_age_days`"
+                    },
+                    {
+                      "name": "width_category",
+                      "expression": "`width_category`"
+                    },
+                    {
+                      "name": "tx_timestamp",
+                      "expression": "`tx_timestamp`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "NEWEST POSITIONS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
+                  },
+                  {
+                    "fieldName": "deposited_token0",
+                    "displayName": "Deposited token 0"
+                  },
+                  {
+                    "fieldName": "deposited_token1",
+                    "displayName": "Deposited token 1"
+                  },
+                  {
+                    "fieldName": "position_age_days",
+                    "displayName": "Age in days"
+                  },
+                  {
+                    "fieldName": "width_category",
+                    "displayName": "Width category"
+                  },
+                  {
+                    "fieldName": "tx_timestamp",
+                    "displayName": "Timestamp"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 6,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "508ebc24",
+            "queries": [
+              {
+                "name": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1670eeed01af997a623a350760277_pair_symbol",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "pair_symbol_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Pair symbol"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "queryName": "dashboards/01f1511eafc51536930b59045bada187/datasets/01f1670eeed01af997a623a350760277_pair_symbol"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a5ffe16e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "326ccaab",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "count_positions_per_pool",
+                      "expression": "`count_positions_per_pool`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOP POOLS PER POSITIONS OPENED"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
+                  },
+                  {
+                    "fieldName": "count_positions_per_pool",
+                    "displayName": "Positions per pool"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 10,
+            "width": 3,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "se",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "token0_name",
+                      "expression": "`token0_name`"
+                    },
+                    {
+                      "name": "token1_name",
+                      "expression": "`token1_name`"
+                    },
+                    {
+                      "name": "network",
+                      "expression": "`network`"
+                    },
+                    {
+                      "name": "protocol_version",
+                      "expression": "`protocol_version`"
+                    },
+                    {
+                      "name": "tx_timestamp",
+                      "expression": "`tx_timestamp`"
+                    },
+                    {
+                      "name": "owner_address",
+                      "expression": "`owner_address`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "SELECTOR"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
+                  },
+                  {
+                    "fieldName": "token0_name",
+                    "displayName": "Token 0"
+                  },
+                  {
+                    "fieldName": "token1_name",
+                    "displayName": "Token 1"
+                  },
+                  {
+                    "fieldName": "network",
+                    "displayName": "Network"
+                  },
+                  {
+                    "fieldName": "protocol_version",
+                    "displayName": "Version"
+                  },
+                  {
+                    "fieldName": "tx_timestamp",
+                    "displayName": "Timestamp"
+                  },
+                  {
+                    "fieldName": "owner_address",
+                    "displayName": "Owner address"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "posit",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "position_age_days",
+                      "expression": "`position_age_days`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Position age in days"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "position_age_days"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 10,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "8bd7e5e6",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "position_width_ticks",
+                      "expression": "`position_width_ticks`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Ticks range width"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "position_width_ticks"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "6f6d4a7e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "deposited_token1",
+                      "expression": "`deposited_token1`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Deposited token 1"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "deposited_token1"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 10,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "9fefda01",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "deposited_token0",
+                      "expression": "`deposited_token0`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Deposited token 0"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "deposited_token0"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 10,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "8ac50990",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "width_category",
+                      "expression": "`width_category`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Range width category"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "width_category"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 8,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "po-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c300c2ad",
+                  "fields": [
+                    {
+                      "name": "pair_symbol",
+                      "expression": "`pair_symbol`"
+                    },
+                    {
+                      "name": "collected_fees_token0",
+                      "expression": "`collected_fees_token0`"
+                    },
+                    {
+                      "name": "collected_fees_token1",
+                      "expression": "`collected_fees_token1`"
+                    },
+                    {
+                      "name": "withdrawn_token0",
+                      "expression": "`withdrawn_token0`"
+                    },
+                    {
+                      "name": "withdrawn_token1",
+                      "expression": "`withdrawn_token1`"
+                    },
+                    {
+                      "name": "tx_timestamp",
+                      "expression": "`tx_timestamp`"
+                    },
+                    {
+                      "name": "pool_id",
+                      "expression": "`pool_id`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "POSITION DETAILS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
+                  },
+                  {
+                    "fieldName": "collected_fees_token0",
+                    "displayName": "Fees token 0"
+                  },
+                  {
+                    "fieldName": "collected_fees_token1",
+                    "displayName": "Fees token 1"
+                  },
+                  {
+                    "fieldName": "withdrawn_token0",
+                    "displayName": "Withdrawn token 0"
+                  },
+                  {
+                    "fieldName": "withdrawn_token1",
+                    "displayName": "Withdrawn token 1"
+                  },
+                  {
+                    "fieldName": "tx_timestamp",
+                    "displayName": "Timestamp"
+                  },
+                  {
+                    "fieldName": "pool_id",
+                    "displayName": "Pool contract"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 12,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "top-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c0962137",
+                  "fields": [
+                    {
+                      "name": "owner_address",
+                      "expression": "`owner_address`"
+                    },
+                    {
+                      "name": "count",
+                      "expression": "`count`"
+                    },
+                    {
+                      "name": "scan_lp_url",
+                      "expression": "`scan_lp_url`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "TOP LIQUIDITY PROVIDERS PER POSITIONS"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "owner_address",
+                    "displayName": "Owner address"
+                  },
+                  {
+                    "fieldName": "count",
+                    "displayName": "Count of positions"
+                  },
+                  {
+                    "fieldName": "scan_lp_url",
+                    "displayName": "Explorer URL"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 6,
+            "height": 4
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
     {
       "name": "6c447f95",
       "displayName": "Swaps",
@@ -505,7 +2431,7 @@
             "name": "b30d66b8",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size:72px;line-height:1.5\">***SWAPS***</span>  </span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;font-family: Georgia;color: #FE37C7;\">***SWAPS***</span>  </span>"
               ]
             }
           },
@@ -538,13 +2464,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Total swaps"
+                "title": "TOTAL SWAPS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "count(*)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -593,13 +2522,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Unique traders"
+                "title": "UNIQUE TRADERS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "measure(Count Distinct Sender)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -632,13 +2564,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Whale swaps counter (100k$+)"
+                "title": "WHALE SWAPS COUNTER (100k$+)"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "sum(count(1))"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -671,13 +2606,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Global average swap size"
+                "title": "GLOBAL AVERAGE SWAP SIZE"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "avg(amount_USD)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -742,13 +2680,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Volume in last 30 days"
+                "title": "VOLUME IN LAST 30 DAYS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "volume_last_30_days"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -793,7 +2734,8 @@
                   "fieldName": "countdistinct(pk_swap_id)",
                   "scale": {
                     "type": "quantitative"
-                  }
+                  },
+                  "displayName": "Count of swaps"
                 },
                 "y": {
                   "fieldName": "swap_tier",
@@ -804,6 +2746,9 @@
                 "label": {
                   "show": true
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -840,7 +2785,7 @@
               "version": 3,
               "frame": {
                 "showTitle": true,
-                "title": "Weekly AVERAGE SWAP SIZE"
+                "title": "WEEKLY AVERAGE SWAP SIZE"
               },
               "widgetType": "area",
               "encodings": {
@@ -859,6 +2804,9 @@
                 "label": {
                   "show": true
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -903,7 +2851,8 @@
                   "fieldName": "measure(SUM amount USD)",
                   "scale": {
                     "type": "quantitative"
-                  }
+                  },
+                  "displayName": "Volume in $"
                 },
                 "color": {
                   "fieldName": "swap_tier",
@@ -914,6 +2863,9 @@
                 "label": {
                   "show": true
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -965,9 +2917,9 @@
             }
           },
           "position": {
-            "x": 7,
+            "x": 6,
             "y": 3,
-            "width": 2,
+            "width": 3,
             "height": 2
           }
         },
@@ -1065,22 +3017,28 @@
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "token0_name"
+                    "fieldName": "token0_name",
+                    "displayName": "Token 0"
                   },
                   {
-                    "fieldName": "token1_name"
+                    "fieldName": "token1_name",
+                    "displayName": "Token 1"
                   },
                   {
-                    "fieldName": "amount_USD"
+                    "fieldName": "amount_USD",
+                    "displayName": "Amount in $"
                   },
                   {
-                    "fieldName": "sender_address"
+                    "fieldName": "sender_address",
+                    "displayName": "Sender address"
                   },
                   {
-                    "fieldName": "recipient_address"
+                    "fieldName": "recipient_address",
+                    "displayName": "Recipient address"
                   },
                   {
-                    "fieldName": "block_timestamp"
+                    "fieldName": "block_timestamp",
+                    "displayName": "Timestamp"
                   }
                 ],
                 "rowOrder": [
@@ -1091,6 +3049,9 @@
                     }
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1123,13 +3084,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Total swaps"
+                "title": "TOTAL SWAPS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "count(*)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1208,13 +3172,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Volume"
+                "title": "VOLUME"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "sum(amount_USD)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1247,13 +3214,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Average swap size"
+                "title": "AVERAGE SWAP SIZE"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "avg(amount_USD)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1286,13 +3256,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Unique traders"
+                "title": "UNIQUE TRADERS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "countdistinct(sender_address)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1316,7 +3289,7 @@
             "name": "a2be539f",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size:72px;line-height:1.5\">***POOLS***</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;font-family: Georgia;color: #FE37C7;\">***POOLS***</span></span>"
               ]
             }
           },
@@ -1458,33 +3431,45 @@
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "pair_symbol"
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
                   },
                   {
-                    "fieldName": "token0_name"
+                    "fieldName": "token0_name",
+                    "displayName": "Token 0"
                   },
                   {
-                    "fieldName": "token1_name"
+                    "fieldName": "token1_name",
+                    "displayName": "Token 1"
                   },
                   {
-                    "fieldName": "total_value_locked_USD"
+                    "fieldName": "total_value_locked_USD",
+                    "displayName": "TVL in $"
                   },
                   {
-                    "fieldName": "fee_tier_pct"
+                    "fieldName": "fee_tier_pct",
+                    "displayName": "Fee tier"
                   },
                   {
-                    "fieldName": "tx_count"
+                    "fieldName": "tx_count",
+                    "displayName": "Transactions"
                   },
                   {
-                    "fieldName": "network"
+                    "fieldName": "network",
+                    "displayName": "Network"
                   },
                   {
-                    "fieldName": "protocol_version"
+                    "fieldName": "protocol_version",
+                    "displayName": "Version"
                   },
                   {
-                    "fieldName": "pool_age_days"
+                    "fieldName": "pool_age_days",
+                    "displayName": "Age in days"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1535,18 +3520,25 @@
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "pair_symbol"
+                    "fieldName": "pair_symbol",
+                    "displayName": "Pair symbol"
                   },
                   {
-                    "fieldName": "volume_USD"
+                    "fieldName": "volume_USD",
+                    "displayName": "Volume in $"
                   },
                   {
-                    "fieldName": "fee_tier_pct"
+                    "fieldName": "fee_tier_pct",
+                    "displayName": "Fee tier"
                   },
                   {
-                    "fieldName": "tx_count"
+                    "fieldName": "tx_count",
+                    "displayName": "Transactions"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1596,8 +3588,7 @@
                   "fieldName": "count(*)",
                   "scale": {
                     "type": "quantitative"
-                  },
-                  "displayName": " "
+                  }
                 },
                 "color": {
                   "fieldName": "tvl_tier",
@@ -1608,6 +3599,9 @@
                 "label": {
                   "show": true
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1710,21 +3704,29 @@
                 "columns": [
                   {
                     "fieldName": "pair_symbol",
-                    "useForSearch": true
+                    "useForSearch": true,
+                    "displayName": "Pair symbol"
                   },
                   {
-                    "fieldName": "tvl_tier"
+                    "fieldName": "tvl_tier",
+                    "displayName": "TVL tier"
                   },
                   {
-                    "fieldName": "fee_tier_pct"
+                    "fieldName": "fee_tier_pct",
+                    "displayName": "Fee tier"
                   },
                   {
-                    "fieldName": "fees_USD"
+                    "fieldName": "fees_USD",
+                    "displayName": "Fees in $"
                   },
                   {
-                    "fieldName": "pk_pool_contract"
+                    "fieldName": "pk_pool_contract",
+                    "displayName": "Pool contract"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1753,16 +3755,16 @@
                       "expression": "`token1_name`"
                     },
                     {
-                      "name": "full_uniswap_url",
-                      "expression": "`full_uniswap_url`"
-                    },
-                    {
                       "name": "network",
                       "expression": "`network`"
                     },
                     {
                       "name": "protocol_version",
                       "expression": "`protocol_version`"
+                    },
+                    {
+                      "name": "full_uniswap_url",
+                      "expression": "`full_uniswap_url`"
                     }
                   ],
                   "disaggregated": true
@@ -1771,25 +3773,37 @@
             ],
             "spec": {
               "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "POOL DETAILS"
+              },
               "widgetType": "table",
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "token0_name"
+                    "fieldName": "token0_name",
+                    "displayName": "Token 0"
                   },
                   {
-                    "fieldName": "token1_name"
+                    "fieldName": "token1_name",
+                    "displayName": "Token 1"
                   },
                   {
-                    "fieldName": "full_uniswap_url"
+                    "fieldName": "network",
+                    "displayName": "Network"
                   },
                   {
-                    "fieldName": "network"
+                    "fieldName": "protocol_version",
+                    "displayName": "Version"
                   },
                   {
-                    "fieldName": "protocol_version"
+                    "fieldName": "full_uniswap_url",
+                    "displayName": "Uniswap URL"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1822,13 +3836,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Days since creation"
+                "title": "AGE IN DAYS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "pool_age_days"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1861,13 +3878,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Total Value Locked in USD"
+                "title": "TOTAL VALUE LOCKED IN $"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "sum(total_value_locked_USD)"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1900,13 +3920,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Transactions"
+                "title": "TRANSACTIONS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "tx_count"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1939,13 +3962,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Volume in USD"
+                "title": "VOLUME IN USD"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "volume_USD"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -1978,13 +4004,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Fees generated"
+                "title": "FEES GENERATED"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "fees_USD"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2008,7 +4037,7 @@
             "name": "56eeb1ea",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;\">***TOKENS***</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 72px;line-height: 1.5;font-family: Georgia;color: #FE37C7;\">***TOKENS***</span></span>"
               ]
             }
           },
@@ -2105,18 +4134,25 @@
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "symbol"
+                    "fieldName": "symbol",
+                    "displayName": "Symbol"
                   },
                   {
-                    "fieldName": "name"
+                    "fieldName": "name",
+                    "displayName": "Name"
                   },
                   {
-                    "fieldName": "token_type"
+                    "fieldName": "token_type",
+                    "displayName": "Type"
                   },
                   {
-                    "fieldName": "tx_count"
+                    "fieldName": "tx_count",
+                    "displayName": "Transactions"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2175,24 +4211,33 @@
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "symbol"
+                    "fieldName": "symbol",
+                    "displayName": "Symbol"
                   },
                   {
-                    "fieldName": "name"
+                    "fieldName": "name",
+                    "displayName": "Name"
                   },
                   {
-                    "fieldName": "token_type"
+                    "fieldName": "token_type",
+                    "displayName": "Type"
                   },
                   {
-                    "fieldName": "volume_USD"
+                    "fieldName": "volume_USD",
+                    "displayName": "Volume in $"
                   },
                   {
-                    "fieldName": "fees_USD"
+                    "fieldName": "fees_USD",
+                    "displayName": "Fees in $"
                   },
                   {
-                    "fieldName": "total_value_locked_USD"
+                    "fieldName": "total_value_locked_USD",
+                    "displayName": "TVL in $"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2257,27 +4302,36 @@
                 "columns": [
                   {
                     "fieldName": "symbol",
-                    "useForSearch": true
+                    "useForSearch": true,
+                    "displayName": "Symbol"
                   },
                   {
                     "fieldName": "name",
-                    "useForSearch": true
+                    "useForSearch": true,
+                    "displayName": "Name"
                   },
                   {
                     "fieldName": "is_low_tvl_token",
-                    "useForSearch": false
+                    "useForSearch": false,
+                    "displayName": "Low TVL"
                   },
                   {
-                    "fieldName": "network"
+                    "fieldName": "network",
+                    "displayName": "Network"
                   },
                   {
                     "fieldName": "volume_USD",
-                    "useForSearch": false
+                    "useForSearch": false,
+                    "displayName": "Volume in $"
                   },
                   {
-                    "fieldName": "pk_token_contract"
+                    "fieldName": "pk_token_contract",
+                    "displayName": "Token contract"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2336,24 +4390,33 @@
               "encodings": {
                 "columns": [
                   {
-                    "fieldName": "symbol"
+                    "fieldName": "symbol",
+                    "displayName": "Symbol"
                   },
                   {
-                    "fieldName": "name"
+                    "fieldName": "name",
+                    "displayName": "Name"
                   },
                   {
-                    "fieldName": "network"
+                    "fieldName": "network",
+                    "displayName": "Network"
                   },
                   {
-                    "fieldName": "protocol_version"
+                    "fieldName": "protocol_version",
+                    "displayName": "Version"
                   },
                   {
-                    "fieldName": "token_type"
+                    "fieldName": "token_type",
+                    "displayName": "Type"
                   },
                   {
-                    "fieldName": "full_uniswap_url"
+                    "fieldName": "full_uniswap_url",
+                    "displayName": "Uniswap URL"
                   }
                 ]
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2425,20 +4488,23 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Total Volume"
+                "title": "TOTAL VOLUME IN $"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "volume_USD"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
           "position": {
             "x": 8,
             "y": 12,
-            "width": 1,
+            "width": 2,
             "height": 2
           }
         },
@@ -2464,13 +4530,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Total Value Locked in Pools"
+                "title": "TVL IN POOLS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "total_value_locked_USD"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2503,20 +4572,23 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Generated Fees"
+                "title": "FEES GENERATED"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "fees_USD"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
           "position": {
-            "x": 9,
+            "x": 10,
             "y": 12,
-            "width": 2,
+            "width": 1,
             "height": 2
           }
         },
@@ -2558,13 +4630,16 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Transactions"
+                "title": "TRANSACTIONS"
               },
               "widgetType": "counter",
               "encodings": {
                 "value": {
                   "fieldName": "tx_count"
                 }
+              },
+              "data": {
+                "queryName": "main_query"
               }
             }
           },
@@ -2621,10 +4696,10 @@
       },
       "widgetBackgroundColor": {
         "light": "#FFFFFF",
-        "dark": "#11171C"
+        "dark": "#0F0F14"
       },
       "widgetBorderColor": {
-        "dark": "#CE35D1"
+        "dark": "#FE37C7"
       },
       "fontColor": {
         "light": "#11171C",
@@ -2632,7 +4707,7 @@
       },
       "selectionColor": {
         "light": "#2272B4",
-        "dark": "#8ACAFF"
+        "dark": "#B021D1"
       },
       "visualizationColors": [
         "#CE35D1",

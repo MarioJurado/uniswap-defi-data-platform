@@ -3,7 +3,7 @@
 
 ---
 ### Project overview (why incremental batches, tech stack, Excalidraw architecture)
-![](/Volumes/uniswap/orchestrator/documentation/Uniswap_architecture.png)
+![](docs/images/Uniswap_architecture.png)
 ### Medallion architecture explanation (layers, medatada orchestration)
 #### · Orchestration
 #### · Bronze
@@ -22,19 +22,19 @@
 ---
 ### Dashboard showcase and url to it (screenshots)
 #### Liquidity Events
-![](/Volumes/uniswap/orchestrator/documentation/Liqudity_Events_page.png)
+![](docs/images/Liqudity_Events_page.png)
 
 #### Liquidity Providers
-![](/Volumes/uniswap/orchestrator/documentation/Liquidity_Providers_page.png)
+![](docs/images/Liquidity_Providers_page.png)
 
 #### Pools
-![](/Volumes/uniswap/orchestrator/documentation/Pools_page.png)
+![](docs/images/Pools_page.png)
 
 #### Swaps
-![](/Volumes/uniswap/orchestrator/documentation/Swaps_page.png)
+![](docs/images/Swaps_page.png)
 
 #### Tokens
-![](/Volumes/uniswap/orchestrator/documentation/Tokens_page.png)
+![](docs/images/Tokens_page.png)
 ---
 ### How to run it
 ---

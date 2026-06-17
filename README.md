@@ -114,7 +114,24 @@ xxxxxxxx
 
 ---
 ## Challenges and learnings
-xxxxxxxxxxxx
+#### · GraphQL & The Graph
+I've mostly worked with structured data along my career, so extracting data from an API was a new challenge, especially since this one required GraphQL, which I hadn't used before. This was probably my biggest technical learning from the project.
+
+Working with The Graph, I struggled with pagination and the skip limits, trying not to exceed the query threshold or overload the API with too many requests. The data types returned by the API were also tricky to manage sometimes.
+
+#### · Diving into DeFi
+Beyond the technical extraction challenges, this project taught me a lot about DeFi itself. I learned how liquidity events are actually generated, what data each entity stores, and which fields actually matter for analysis versus which are just noise. I was also surprised by how vast the amount of data generated really is, every swap, mint, and burn across thousands of pools adds up fast.
+
+Diving into Concentrated Liquidity in particular gave me a much deeper understanding of how it works behind the scenes, down to a level of detail I hadn't expected, like how positions are defined within specific tick ranges rather than across the entire price curve, the way V2 pools work.
+
+#### · Pool filtering thresholds
+Deciding which pools were relevant enough to extract pushed me to understand which values actually mattered and why. Reaching the right thresholds wasn't straightforward, it took several iterations of testing, hitting errors, and adjusting until the logic made sense.
+
+#### · Metadata-driven orchestration
+I really enjoyed building a Medallion Architecture with a fully metadata-driven orchestration, one with dynamic behavior that adapts to new entities and scales to bigger scenarios. From the start, I didn't want to build something tied to just this one use case, this architecture could work for any project.
+
+#### · Dashboard development
+Building the dashboard was also a lot of fun. I'm not a Data Analyst, so creating visuals that conveyed useful information was harder than expected, even with this many tables to work with!
 
 ---
 ## Future improvements
@@ -127,11 +144,11 @@ This PoC was designed to cover only Uniswap V3 data on the Ethereum chain, runni
 - **Engineering maturity:** add some data quality checks, and start deploying with Databricks Asset Bundles for CI/CD instead of managing notebooks by hand.
 
 ---
-## Contact me 
-Either you liked my project, you want to ask anything, contribute or anything else, you can reach me out at:  
-mariojuradogalan@outlook.com  
-or via LinkedIn:  
-[LinkedIn profile](https://www.linkedin.com/in/mariojuradogalan/)
+## Contact me
+Whether you liked the project, want to ask something, contribute, or anything else, feel free to reach out to me:
+
+📧 mariojuradogalan@outlook.com  
+💼 [LinkedIn](https://www.linkedin.com/in/mariojuradogalan/)
 
 
 

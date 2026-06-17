@@ -58,14 +58,36 @@ I'd like to highlight that for some entities, such as Swaps, I had to prune the 
 #### · Gold
 ---
 ## Uniswap Data Model
+
+The entities below are extracted directly from the Uniswap V3 Subgraph, using the same names and structure defined in [Uniswap's official documentation](https://developers.uniswap.org/docs/ecosystem/subgraphs/concepts/v3/entities). For a complete field-by-field breakdown, refer to that documentation; this section focuses on what each entity represents and the role it plays in this project.
+
+On top of these entities, a dimensional model was built in the Gold layer, composed of four dimensions, Pools, Tokens, Positions, and Time, and two fact tables, Swaps and Liquidity Events, built by combining Mints and Burns.
+
 #### · Factory
+A single-row entity representing protocol-wide aggregated statistics, such as total pools created, total transactions, total fees, and total value locked across the entire Uniswap V3 deployment. Rather than becoming a dimension on its own, it's used as contextual reference data, such as network and protocol version, across other Gold tables.
+
 #### · Pools
+Represents each liquidity pool, the core unit of Uniswap where a pair of tokens is traded, holding metrics such as total value locked, volume, fees, and fee tier. This entity becomes the **Pools dimension**, enriched with attributes like TVL tier, pool age, and the token pair symbol.
+
 #### · Tokens
+Represents each ERC-20 token traded on the protocol, including metrics like volume, total value locked, and derived price in ETH. This entity becomes the **Tokens dimension**, enriched with a classification distinguishing stablecoins, wrapped assets, and other tokens.
+
 #### · Ticks
+Represents discrete price points within a pool, the foundation of Concentrated Liquidity, since each tick marks a boundary where liquidity providers can choose to allocate their funds. This entity stays at the Silver layer, supporting price-range context, but isn't promoted into its own Gold table.
+
 #### · Swaps
+Represents a trade between two tokens within a pool. Only swaps from relevant pools and with a non-zero USD amount are extracted, as explained in the Load strategy section. This entity becomes the **Swaps fact table**, enriched with a swap size tier (small, medium, large, whale).
+
 #### · Positions
+Represents a liquidity provider's stake within a specific price range (between a lower and upper tick) of a pool. This entity becomes the **Positions dimension**, which is what powers the Liquidity Providers view on the dashboard, enriched with a position width category (narrow, medium, wide).
+
 #### · Mints
+Represents a liquidity addition event, when a provider deposits tokens into a position. Together with Burns, this entity feeds the **Liquidity Events fact table**.
+
 #### · Burns
+Represents a liquidity removal event, when a provider withdraws tokens from a position. Combined with Mints, both events are unioned into the **Liquidity Events fact table**, with mints contributing a positive liquidity delta and burns a negative one, plus an event size category (small, medium, large, whale).
+
+
 ---
 ## Dashboard showcase
 #### Access URL
@@ -96,11 +118,13 @@ xxxxxxxxxxxx
 
 ---
 ## Future improvements
-This PoC was designed to cover only Uniswap V3 data on the Ethereum chain, and as explained above, it runs as an incremental batch load twice a week.
 
-The next steps on the roadmap would be implementing the other Uniswap protocol versions (mainly V2 and V4) and extracting data from other chains as well.
+This PoC was designed to cover only Uniswap V3 data on the Ethereum chain, running as an incremental batch load twice a week. There are several directions I'd like to take it further:
 
-Additionally, I'd like to deploy a version using Lakeflow Spark Declarative Pipelines to make it near real-time, providing more accurate analysis.
+- **Protocol & chain coverage:** add the other Uniswap versions (V2, V4) and extract data from chains beyond Ethereum mainnet.
+- **Near real-time:** migrate to Lakeflow Spark Declarative Pipelines for more accurate, up-to-date analysis.
+- **Data model:** promote Ticks into the Gold layer to enable liquidity-depth analysis on the dashboard.
+- **Engineering maturity:** add some data quality checks, and start deploying with Databricks Asset Bundles for CI/CD instead of managing notebooks by hand.
 
 ---
 ## Contact me 

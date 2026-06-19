@@ -1,4 +1,5 @@
-# Uniswap DeFi Data Platform
+
+# Uniswap DeFi Data Platform <img src="docs/images/logo.png" width="45"/> 
 ## Introdution
 This project provides a data architecture designed to extract and analyze Uniswap data, offering a tool for DeFi enthusiasts who want a deeper understanding of what's happening on-chain.
 

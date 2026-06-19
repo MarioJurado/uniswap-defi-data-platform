@@ -109,8 +109,22 @@ Represents a liquidity removal event, when a provider withdraws tokens from a po
 ![](docs/images/Tokens_page.png)
 
 ---
-## How to run it
-xxxxxxxx
+## How to
+#### · Use the dashboard
+1. Create a Databricks Free Edition account with your email.
+2. Once done, open the link provided in this documentation or in the About section to access the dashboard.
+
+#### · Run your own version of the platform
+1. Create a Databricks Free Edition account with your email.
+2. Clone the repository into a Repo folder.
+3. You'll need an API key and the subgraph ID, stored as Databricks secrets. You can get these by creating an account on The Graph, connecting your EVM wallet, and generating an API key.
+4. Use the notebook called `manage_databricks_secrets`, inside the `00_architecture` folder, to create these secrets. Remember to paste your Databricks Host URL and your API key, the Subgraph ID is already included in the notebook.
+5. Create a Databricks Job using the `medallion_job_declaration` YAML file found in the repository.
+    - Change the relative paths of both tasks that run each orchestrator from mine to yours. For example, mine is `/Workspace/Users/mariojuradogalan@outlook.com/uniswap-defi-data-platform/00_orchestrators/main_orchestrator`, so you should replace my email with yours.
+    - Change the email notification from mine to yours.
+6. Go to the Tasks tab within the Job, select `main_orchestrator`, and set the `create_architecture` and `create_orchestrator_tables` parameters to **true**, so the platform creates everything it needs to run properly the first time. Remember to set them back to **false** once you've run it for the first time.
+7. Run the job manually, or wait for it to trigger automatically every Wednesday and Sunday.
+8. If you want to modify the load behavior, add new entities, or anything else, you'll just need to update the `active_for_load` and `load_pattern` columns in the `uniswap.orchestrator.configuration` table.
 
 ---
 ## Challenges and learnings

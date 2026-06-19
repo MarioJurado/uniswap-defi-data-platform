@@ -50,12 +50,73 @@ I'd like to highlight that for some entities, such as Swaps, I had to prune the 
 
 **Partitioning:** There was no need to partition any table, since, again, the size of the tables was small enough to be handled efficiently by Delta Lake. As an example, the Swaps table is around ~5GB. The actual bottleneck was the number of API queries, not the storage layer. Databricks recommends not partitioning tables smaller than 500GB, so there's still a long way to go before that becomes a concern.
 
+#### · Costs callout
+Everything runs on Databricks Free Edition and The Graph's Free Plan so this can be reproduced at zero cost.
+
 ---
 ## Medallion architecture explanation
+This section covers how the platform is organized following the Medallion Architecture pattern, structuring data into Bronze, Silver, and Gold layers of increasing quality and refinement. It also explains how the entire pipeline is orchestrated, driven by metadata rather than hardcoded logic, which makes the platform dynamic and easily adaptable to new entities.
+
 #### · Orchestration
-#### · Bronze
-#### · Silver
-#### · Gold
+The entire pipeline execution is driven by metadata rather than hardcoded logic, which makes the platform dynamic and easily adaptable as new entities are added. This section covers the components that make this orchestration possible.
+
+- **Databricks Job:** triggers a full execution twice a week (Wednesdays and Sundays). It first runs the Main Orchestrator notebook, which gathers the list of layers to be executed and passes it as a parameter to a "for each" task that iterates over that list, running the Layer Orchestrator notebook for each one.
+- **Main Orchestrator:** creates the architecture, reads the configuration table and determines which layers need to run, in order (first Bronze, then Silver, then Gold).
+- **Layer Orchestrator:** reads the configuration table again and executes each activated entity within a layer according to its priority. For example, Pools has to run before Swaps, because of the pool filtering method used to prune the loaded rows. You can see the priority for each entity in the next point.
+- **Configuration table:** stores the configuration for each entity, including whether it's active for the load, its priority, the load pattern, the layer it belongs to, and the path to its notebook. It gets populated for the first time, once created, with the data from `00_architecture/populate_config_table`. Its location within the catalog is `uniswap.orchestrator.configuration`.
+- **Logs table:** keeps track of everything that happens during an execution. The location within the catalog is `uniswap.orchestrator.logs`.
+
+#### · Bronze layer
+The Bronze layer is, in this project, the most important of the three. This is where all the raw data lives, landed right after extraction. I do incremental loads in Bronze, appending new rows to the existing ones so the entity end up with the full history.
+
+This is also the layer where I used GraphQL to query The Graph's API, and where I faced most of the challenges. Losing this layer would mean having to re-extract everything from scratch.
+
+Each entity had its own requirements, based on how much data Uniswap generates for it. So I had to manage each one independently, adjusting how much I was pruning the results to avoid extremely long extraction times. For example, Swaps is by far the entity with the largest amount of data: on the first day, the extraction ran for 5 hours and still didn't finish. Other entities, like Pools or Tokens, have far fewer rows, since Uniswap doesn't have billions of pools or tokens on its platform. But imagine how many swaps between tokens can happen on Uniswap.
+
+One thing required for every entity, regardless of size, was pagination. The Subgraph only returns 1,000 rows per query, so I had to keep track of how many rows had already been extracted, pass that value into the next query, and retrieve the following 1,000 rows. Nothing too complicated.
+
+For this PoC, I didn't need 100% of the data, so I only kept data from the most relevant pools, based on three parameters: minimum total value locked, volume in USD, and number of transactions. This helped a lot in reducing extraction times by keeping only relevant data.
+
+Some entities also required extracting only data from the last 4 days, since, as we saw in the previous point, the job runs twice a week, so only the most recent data is needed, which also helps achieve good performance.
+
+With these three methods, I managed to reduce the load time from several hours to half an hour, without losing any important data. I could loosen the pool filtering, and the project would still end up with the same important data, but also a lot of "dust" data that, in my opinion, isn't relevant.
+
+I don't want to dive into more technical details here. I know some of you are technical, so feel free to check the source code in the repo and dive in as much as you'd like.
+
+I'm not just sure, I know there are many ways to do this better, faster, and with less processing effort. But this is the approach that worked for me, and I'd love to hear your recommendations!
+
+A brief summary of the load behavior for each entity:
+
+| Entity | Pagination | Pool filtering | Date filtering | Priority |
+|---|---|---|---|---|
+| Factory | – | – | – | 1 |
+| Pools | ✅ | – | – | 1 |
+| Tokens | ✅ | – | – | 1 |
+| Ticks | ✅ | Medium | – | 2 |
+| Swaps | ✅ | Extreme | Last 4 days | 2 |
+| Positions | ✅ | Super light | Last 4 days | 2 |
+| Mints | ✅ | Super light | Last 4 days | 2 |
+| Burns | ✅ | Super light | Last 4 days | 2 |
+
+
+
+#### · Silver layer
+The Silver layer is where transformations, deduplication, data cleaning, and type casting usually happen. What I did here was load the entities from the Bronze layer, apply all the necessary transformations, and then store the transformed entities in the Silver schema.
+
+We still have the same number of entities as in the Bronze layer at this stage.
+
+#### · Gold layer
+The Gold layer is where I built the dimensional model. Here I created the fact tables, which store events as they happened, these tables are usually long in row count but short in context (fewer columns), and the dimension tables, which provide the context that gets joined to the fact tables.
+
+These fact and dimension tables were built from Silver entities, sometimes joining several of them together, and other times just retrieving the data directly from a single Silver entity. For both table types, I tried to bring in as much metrics and context as possible to enrich the entities.
+
+From the original 8 entities, this results in 5 dimensional model entities:
+- Pools dimension
+- Tokens dimension
+- Positions dimension
+- Swaps fact
+- Liquidity Events fact
+
 ---
 ## Uniswap Data Model
 
